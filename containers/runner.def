@@ -16,7 +16,7 @@ Stage: build
 
 %runscript
     echo "Arguments received: $*"
-    
+
     # Create a unique Github runner token
     RUNNER_TOKEN=$(curl    -s \
                     -L \
@@ -44,7 +44,7 @@ Stage: build
         --unattended \
         --token $RUNNER_TOKEN \
         --name $RUNNER_NAME
-    
+
     ./run.sh
 
     # curl -L \

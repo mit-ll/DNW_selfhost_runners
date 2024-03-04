@@ -27,7 +27,7 @@ Github Actions is an event based scheduler that triggers based on user defined e
 ## Create Github Token
 In order to use Github runners you first need to create an ***organization***.  An organization allows you add members and projects.  Git runners assigned to an organization and will automatically process jobs that belong to that organization.
 
-In order to create a Git runner you need to create a classic **Github token** via: 
+In order to create a Git runner you need to create a classic **Github token** via:
 
 * Settings > Developer Settings > Personal Access Tokens > Tokens (classic)
 
@@ -94,5 +94,3 @@ To host a Git runner simply run the container via:
 ```bash
 singularity run --userns --writable --env GITHUB_TOKEN=$GITHUB_TOKEN runner.sif
 ```
-
-If you want 

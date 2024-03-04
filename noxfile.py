@@ -19,7 +19,6 @@ nox                        # Run all sessions
 from dataclasses import dataclass
 
 import nox
-
 from src.ci.utils import view_html
 
 
