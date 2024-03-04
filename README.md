@@ -1,4 +1,27 @@
-# 🤖 Git Actions
+<p align="center">
+  <a href="https://github.com/destin-v">
+    <img src="https://drive.google.com/uc?export=view&id=1yFte-RASCcF1ahkYg1Jybavi-gWje8kp" alt="drawing" width="500"/>
+  </a>
+</p>
+
+# 📒 Description
+<p align="center">
+  <img src="docs/pics/program_logo.png" alt="drawing" width="350"/>
+</p>
+
+<p align="center">
+  <a href="https://devguide.python.org/versions/">              <img alt="" src="https://img.shields.io/badge/python-^3.10-blue?logo=python&logoColor=white"></a>
+  <a href="https://docs.github.com/en/actions/quickstart">      <img alt="" src="https://img.shields.io/badge/CI-github-blue?logo=github&logoColor=white"></a>
+  <a href="https://black.readthedocs.io/en/stable/index.html">  <img alt="" src="https://img.shields.io/badge/code%20style-black-blue"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/destin-v/vs_codex/actions/workflows/pre-commit.yml">  <img alt="pre-commit" src="https://github.com/destin-v/vs_codex/actions/workflows/pre-commit.yml/badge.svg"></a>
+  <a href="https://destin-v.github.io/vs_codex/src.html">                           <img alt="pdoc" src="https://github.com/destin-v/vs_codex/actions/workflows/pdoc.yml/badge.svg"></a>
+  <a href="https://github.com/destin-v/vs_codex/actions/workflows/pytest.yml">      <img alt="pytest" src="https://github.com/destin-v/vs_codex/actions/workflows/pytest.yml/badge.svg"></a>
+</p>
+
+# 📒 Description
 Github Actions is an event based scheduler that triggers based on user defined events.  A commmon use for Github Actions is Continuous Integration / Continuous Development (CI/CD).  But Github Actions can be configured to trigger off of any user defined event.  This makes them very powerful for scheduling jobs.
 
 ## Create Github Token
@@ -21,7 +44,7 @@ To pass an environment variable into an Apptainer/Singularity container:
 ```bash
 singularity run --env GITHUB_TOKEN=$GITHUB_TOKEN <container.sif>
 ```
-## Common Commands
+## Git Runner Commands
 Most of the common API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).
 
 ### List Runners
@@ -34,32 +57,8 @@ curl -L \
   https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners
 ```
 
-### Create Github Runner Token
-Runner tokens are needed whenever you want to create a new runner.  These API calls need a Github personal access token in order to generate a runner token.
-
-To view on the command line:
-```bash
-curl -L \
-  -X POST \
-  -H "Accept: application/vnd.github+json" \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/registration-token
-```
-
-To save as environment variable:
-```bash
-RUNNER_TOKEN=$(curl    -s \
-                -L \
-                -X POST \
-                -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-                -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
-                --url "https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/registration-token" \
-                | jq .token --raw-output)
-```
-
 ### Create JIT Runner
-Create  a JIT runner.
+Create  a JIT runner with a specific `RUNNER_NAME`.  This command be be re-executed with new names to generate multiple runners.
 
 ```bash
 curl -L \
@@ -67,6 +66,33 @@ curl -L \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://llcad-github-dev.llan.ll.mit.edu/api/v3/orgs/git-runners/actions/runners/generate-jitconfig \
-  -d '{"name":"New runner","runner_group_id":1,"labels":["self-hosted","X64","ubuntu-latest"],"work_folder":"_work"}'
+  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/generate-jitconfig \
+  -d '{"name":"'${RUNNER_NAME}'","runner_group_id":1,"labels":["self-hosted","X64","ubuntu-latest"],"work_folder":"_work"}'
 ```
+
+### Get a Runner
+```bash
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/10
+```
+
+# Container Deployment
+
+To create a container with Git runner:
+
+```bash
+cd containers
+singularity build base.sif base.def
+singularity build runner.sif runner.def
+```
+
+To host a Git runner simply run the container via:
+
+```bash
+singularity run --userns --writable --env GITHUB_TOKEN=$GITHUB_TOKEN runner.sif
+```
+
+If you want 

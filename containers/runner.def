@@ -8,22 +8,49 @@ Stage: build
     apt-get install -y wamerican
     apt-get clean
 
+    # Download the Git runner code
+    curl -o actions-runner-linux-x64-2.309.0.tar.gz -L -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkZZcFY0S1ZBeXMzUE90bzFobFlHcXdDOW9IYyJ9.eyJuYW1laWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJzY3AiOiJBY3Rpb25zUnVudGltZS5QYWNrYWdlRG93bmxvYWQiLCJJZGVudGl0eVR5cGVDbGFpbSI6IlN5c3RlbTpTZXJ2aWNlSWRlbnRpdHkiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiJERERERERERC1ERERELUREREQtRERERC1EREREREREREREREQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3ByaW1hcnlzaWQiOiJkZGRkZGRkZC1kZGRkLWRkZGQtZGRkZC1kZGRkZGRkZGRkZGQiLCJhdWkiOiI4NjkwMTc3ZS05MTBiLTRlMDgtYjRhOS0zYWI5NjdhMDBlOTAiLCJzaWQiOiIzMDY3YzI5OS1jNWE3LTQ5ZGMtYjk4OC00MWM2MjBlMDNhYjYiLCJpc3MiOiJsbGNhZC1naXRodWItZGV2LmxsYW4ubGwubWl0LmVkdSIsImF1ZCI6ImxsY2FkLWdpdGh1Yi1kZXYubGxhbi5sbC5taXQuZWR1L19zZXJ2aWNlcy92c3Rva2VuIiwibmJmIjoxNzA5NTg3MjAxLCJleHAiOjE3MDk1OTE0MDF9.EDT8r5UUalAgxHZoEqiUmcbub_qPLbT3r_yS8ShgyMY6QysQqlQkLKG7OHpfLs9fjYNCifRoMF0Y5ThL7hbhxA4C3ICNwp7x6nzR-gVP08AUpETiXVV-L61004cok-8Cz3Rrg9wjzQLzy5-JjuFlBysNpNwwqIudAk-9sFGJDFiuSi9TCmHCKMpvZSfnYVR5zBxFZURpuwxjxOQBBkYuyLU9P-Qvc8jKBjXSLkx_R0TWEi9UI9UgHAFHpsQr0lM0qY1ktXTACFZGR23qe8-bFtA0ukONEPGn7zi4spO5ng7Q_kYlDratB0qWFi8adC6THHtRllA0RlXiq_ecaWV8C9ZJet4jaGFaNScaPJp8FUCap9Kxufg1LGS1QMpeFqaBIhI0V1A7H9T9EYnwDjYHxT5k22uJrECkwqLmTGJ6NrbEY3zdy-d7rbhXL6SLiPWdfXuMMI89_zxsXbmizW8lQAFMK5WjaOvXEzIrt23jghH0OFAFa1eg5O2SAqqZH9qwYdwUhcfGDIfwZ-Da8UcdO5jAezjJMeTs--NB_OL8DUF1uP7LrxZ6SnkU8OEGSoBugoCGhNkwJlKbFf_ivnDWoahUqB8l1v4jxf-5XrhIy9gUttj8a3K-P414qNJz-aTBxFXX4qrOvBHJP-0zemz1915T5M9xYkNyHbqzQm3RqdA' https://llcad-github-dev.llan.ll.mit.edu/_services/pipelines/_apis/distributedtask/packagedownload/agent/linux-x64/2.309.0
+
+    # Untar
+    tar xzf ./actions-runner-linux-x64-2.309.0.tar.gz
+
 %runscript
     echo "Arguments received: $*"
     
+    # Create a unique Github runner token
+    RUNNER_TOKEN=$(curl    -s \
+                    -L \
+                    -X POST \
+                    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                    -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+                    --url "https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/registration-token" \
+                    | jq .token --raw-output)
+
     # Create a randomized name
     export NAME1=$(shuf -n1 /usr/share/dict/words)
     export NAME2=$(shuf -n1 /usr/share/dict/words)
     export RUNNER_NAME="${NAME1}-${NAME2}"
+    export RUNNER_TOKEN="$RUNNER_TOKEN"
 
+    # Display configuration
     echo "GITHUB_TOKEN=$GITHUB_TOKEN"
     echo "RUNNER_NAME=$RUNNER_NAME"
+    echo "RUNNER_TOKEN=$RUNNER_TOKEN"
     echo "Setting up JIT Runner: ${RUNNER_NAME}"
 
-    curl -L \
-        -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/generate-jitconfig \
-        -d '{"name":"'${RUNNER_NAME}'","runner_group_id":1,"labels":["self-hosted","X64","ubuntu-latest"],"work_folder":"_work"}'
+    # Configure Runner
+    ./config.sh \
+        --url https://llcad-github-dev.llan.ll.mit.edu/git-runners \
+        --unattended \
+        --token $RUNNER_TOKEN \
+        --name $RUNNER_NAME
+    
+    ./run.sh
+
+    # curl -L \
+    #     -X POST \
+    #     -H "Accept: application/vnd.github+json" \
+    #     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    #     -H "X-GitHub-Api-Version: 2022-11-28" \
+    #     https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/generate-jitconfig \
+    #     -d '{"name":"'${RUNNER_NAME}'","runner_group_id":1,"labels":["self-hosted","X64","ubuntu-latest"],"work_folder":"_work"}'
