@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://github.com/destin-v">
-    <img src="https://drive.google.com/uc?export=view&id=1yFte-RASCcF1ahkYg1Jybavi-gWje8kp" alt="drawing" width="500"/>
+  <a href="https://llcad-github.llan.ll.mit.edu/wli/wli">
+    <img src="https://llcad-github.llan.ll.mit.edu/wli/wli/blob/main/docs/pics/logo.gif?raw=true" alt="drawing" width="500"/>
   </a>
 </p>
 
@@ -33,23 +33,11 @@ In order to create a Git runner you need to create a classic **Github token** vi
 
 A Github personal token is an identifier that lets Github Actions know who you are.  Think of it as a userId.  Make sure you allow all permissions.
 
-To make your Github personal token available to your API calls it is best to set it in the environment:
-
-```bash
-export GITHUB_TOKEN=<GITHUB_TOKEN>
-```
-
-To pass an environment variable into an Apptainer/Singularity container:
-
-```bash
-singularity run --env GITHUB_TOKEN=$GITHUB_TOKEN <container.sif>
-```
-
 ## Git Runner Code
 You must download the code for a Git runner [**here**](https://github.com/actions/runner/releases).  Note the version number because self-hosting may require versions within a certain range.  Once you have identified the version you want, copy the download code into your container.
 
 ## Git Runner Commands
-Rest API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).  Pay special attention to the `hostname` and the `token` type.  These often cause confusion because the URL changes based on the type of command requested.  For standardized API calls consider using the [**gh cli**](https://cli.github.com/).
+Rest API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).  Pay special attention to the `hostname` and the `token` type.  The *curl* commands change depending on the request.  For standardized API calls consider using the [**gh cli**](https://cli.github.com/) instead.
 
 # Container Deployment
 
@@ -61,8 +49,16 @@ singularity build base.sif base.def
 singularity build runner.sif runner.def
 ```
 
-To host a Git runner simply run the container via:
+The Singularity container will inherit your environmental variables.  Make sure you set the following before starting the container:
+
+* `HOSTNAME`: The hostname of your github website.  Omit the http:// pre-fix for your website.
+* `GH_ORG`: The organization you have created.
+
+Your Github Personal token should be input as separately.  This is for security reasons to prevent it being passed in as part of the environment.
 
 ```bash
-singularity run --userns --writable --env GITHUB_TOKEN=$GITHUB_TOKEN runner.sif
+export HOSTNAME=<hostname>            # example: my-host.com
+export GH_ORG=<Github organization>   # example: my-org
+
+singularity run --userns --writable runner.sif ${GH_PERSONAL_TOKEN}
 ```
