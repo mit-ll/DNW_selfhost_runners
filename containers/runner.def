@@ -22,7 +22,7 @@ Stage: build
 
     # Github authentication login
     echo $1 > mytoken.txt
-    gh auth login -h $HOSTNAME --with-token < mytoken.txt
+    gh auth login --hostname $HOSTNAME --with-token < mytoken.txt
     rm mytoken.txt
 
     # Create a unique Github Runner token

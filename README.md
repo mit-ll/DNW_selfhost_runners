@@ -37,11 +37,13 @@ A Github personal token is an identifier that lets Github Actions know who you a
 You must download the code for a Git runner [**here**](https://github.com/actions/runner/releases).  Note the version number because self-hosting may require versions within a certain range.  Once you have identified the version you want, copy the download code into your container.
 
 ## Git Runner Commands
-Rest API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).  Pay special attention to the `hostname` and the `token` type.  The *curl* commands change depending on the request.  For standardized API calls consider using the [**gh cli**](https://cli.github.com/) instead.
+Rest API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).
 
-# Container Deployment
+Pay special attention to the `hostname` and the `token` type.  The *curl* commands change depending on the request.  For standardized API calls consider using the [**gh cli**](https://cli.github.com/) instead.
 
-To create a container with Git runner:
+# 🐳 Container Deployment
+
+## Running Container
 
 ```bash
 cd containers
@@ -54,11 +56,24 @@ The Singularity container will inherit your environmental variables.  Make sure 
 * `HOSTNAME`: The hostname of your github website.  Omit the http:// pre-fix for your website.
 * `GH_ORG`: The organization you have created.
 
-Your Github Personal token should be input as separately.  This is for security reasons to prevent it being passed in as part of the environment.
-
 ```bash
 export HOSTNAME=<hostname>            # example: my-host.com
 export GH_ORG=<Github organization>   # example: my-org
+```
 
-singularity run --userns --writable runner.sif ${GH_PERSONAL_TOKEN}
+Your Github Personal token should be input as separately.  This is for security reasons to prevent it being passed in as part of the environment.
+
+
+
+```bash
+singularity run --userns --writable runner.sif <GH_PERSONAL_TOKEN>
+```
+
+## Deploying Instances
+```bash
+singularity instance start --userns --writable runner.sif instance1
+singularity instance start --userns --writable runner.sif instance2
+
+singularity run --env HOSTNAME=$HOSTNAME,GH_ORG=$GH_ORG instance://instance1 <GH_PERSONAL_TOKEN>
+singularity run --env HOSTNAME=$HOSTNAME,GH_ORG=$GH_ORG instance://instance2 <GH_PERSONAL_TOKEN>
 ```
