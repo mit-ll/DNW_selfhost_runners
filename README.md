@@ -44,40 +44,12 @@ To pass an environment variable into an Apptainer/Singularity container:
 ```bash
 singularity run --env GITHUB_TOKEN=$GITHUB_TOKEN <container.sif>
 ```
+
+## Git Runner Code
+You must download the code for a Git runner [**here**](https://github.com/actions/runner/releases).  Note the version number because self-hosting may require versions within a certain range.  Once you have identified the version you want, copy the download code into your container.
+
 ## Git Runner Commands
-Most of the common API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).
-
-### List Runners
-
-```bash
-curl -L \
-  -H "Accept: application/vnd.github+json" \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners
-```
-
-### Create JIT Runner
-Create  a JIT runner with a specific `RUNNER_NAME`.  This command be be re-executed with new names to generate multiple runners.
-
-```bash
-curl -L \
-  -X POST \
-  -H "Accept: application/vnd.github+json" \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/generate-jitconfig \
-  -d '{"name":"'${RUNNER_NAME}'","runner_group_id":1,"labels":["self-hosted","X64","ubuntu-latest"],"work_folder":"_work"}'
-```
-
-### Get a Runner
-```bash
-curl -L \
-  -H "Accept: application/vnd.github+json" \
-  -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.llcad-github-dev.llan.ll.mit.edu/orgs/git-runners/actions/runners/10
-```
+Rest API commands can be found [**here**](https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28).  Pay special attention to the `hostname` and the `token` type.  These often cause confusion because the URL changes based on the type of command requested.  For standardized API calls consider using the [**gh cli**](https://cli.github.com/).
 
 # Container Deployment
 
