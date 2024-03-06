@@ -9,12 +9,12 @@ def get_config():
     gh_org = os.environ.get("GH_ORG", None)
 
     if gh_hostname is None:
-        print("Environment varible [bold]GH_HOSTNAME[/bold] must be set")
-        print("$ export [bold]GH_HOSTNAME=<github.com>[/bold]")
+        print("Environment varible GH_HOSTNAME must be set")
+        print("$ export GH_HOSTNAME=<github.com>")
         raise ValueError("Invalid value")
     if gh_org is None:
-        print("Environment varible [bold]GH_ORG[/bold] must be set")
-        print("$ export [bold]GH_ORG=<my-organization>[/bold]")
+        print("Environment varible GH_ORG must be set")
+        print("$ export GH_ORG=<my-organization>")
         raise ValueError("Invalid value")
 
     # Get secret from user
