@@ -53,20 +53,24 @@ singularity build runner.sif runner.def
 
 The Singularity container will inherit your environmental variables.  Make sure you set the following before starting the container:
 
-* `HOSTNAME`: The hostname of your github website.  Omit the http:// pre-fix for your website.
+* `GH_HOSTNAME`: The hostname of your github website.  Omit the http:// pre-fix for your website.
 * `GH_ORG`: The organization you have created.
 
 ```bash
-export HOSTNAME=<hostname>            # example: my-host.com
+export GH_HOSTNAME=<hostname>            # example: my-host.com
 export GH_ORG=<Github organization>   # example: my-org
 ```
 
-Your Github Personal token should be input as separately.  This is for security reasons to prevent it being passed in as part of the environment.
+Your Github Personal token should be input manually.  This is for security reasons to prevent it being passed in as part of the environment.
 
 
 
 ```bash
-singularity run --userns --writable runner.sif <GH_PERSONAL_TOKEN>
+singularity run \
+  --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG \
+  --userns \
+  --writable \
+  runner.sif <GH_PERSONAL_TOKEN>
 ```
 
 ## Deploying Instances
@@ -74,6 +78,6 @@ singularity run --userns --writable runner.sif <GH_PERSONAL_TOKEN>
 singularity instance start --userns --writable runner.sif instance1
 singularity instance start --userns --writable runner.sif instance2
 
-singularity run --env HOSTNAME=$HOSTNAME,GH_ORG=$GH_ORG instance://instance1 <GH_PERSONAL_TOKEN>
-singularity run --env HOSTNAME=$HOSTNAME,GH_ORG=$GH_ORG instance://instance2 <GH_PERSONAL_TOKEN>
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG instance://instance1 <GH_PERSONAL_TOKEN>
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG instance://instance2 <GH_PERSONAL_TOKEN>
 ```

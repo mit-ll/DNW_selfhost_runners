@@ -22,7 +22,7 @@ Stage: build
 
     # Github authentication login
     echo $1 > mytoken.txt
-    gh auth login --hostname $HOSTNAME --with-token < mytoken.txt
+    gh auth login --hostname $GH_HOSTNAME --with-token < mytoken.txt
     rm mytoken.txt
 
     # Create a unique Github Runner token
@@ -30,7 +30,7 @@ Stage: build
         --method POST \
         -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        --hostname "$HOSTNAME" \
+        --hostname "$GH_HOSTNAME" \
         /orgs/"$GH_ORG"/actions/runners/registration-token \
         | jq .token --raw-output)
 
@@ -42,7 +42,7 @@ Stage: build
 
     # Display configuration
     echo "Arguments received: $*"
-    echo "Hostname (w/o https)  = $HOSTNAME"
+    echo "Hostname (w/o https)  = $GH_HOSTNAME"
     echo "Github Organization   = $GH_ORG"
     echo "Github Runner Name    = $GH_RUNNER_NAME"
     echo "Github Runner Token   = $GH_RUNNER_TOKEN"
@@ -50,7 +50,7 @@ Stage: build
     # Configure Runner
     cd $HOME/actions-runner
     ./config.sh \
-        --url "https://$HOSTNAME/$GH_ORG" \
+        --url "https://$GH_HOSTNAME/$GH_ORG" \
         --unattended \
         --token $GH_RUNNER_TOKEN \
         --name $GH_RUNNER_NAME
