@@ -39,7 +39,7 @@
     "___________________________Testing___________________________": "",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-        "."
+        "tests"
     ],
     "python.testing.unittestEnabled": false,
     "___________________________Themes___________________________": "",
