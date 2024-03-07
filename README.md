@@ -57,12 +57,11 @@ The Singularity container will inherit your environmental variables.  Make sure 
 * `GH_ORG`: The organization you have created.
 
 ```bash
-export GH_HOSTNAME=<hostname>            # example: my-host.com
+export GH_HOSTNAME=<hostname>         # example: my-host.com
 export GH_ORG=<Github organization>   # example: my-org
 ```
 
 Your Github Personal token should be input manually.  This is for security reasons to prevent it being passed in as part of the environment.
-
 
 
 ```bash
@@ -70,14 +69,26 @@ singularity run \
   --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG \
   --userns \
   --writable \
-  runner.sif <GH_PERSONAL_TOKEN>
+  --app test_runner \
+  containers/runner.sif <GH_PERSONAL_TOKEN>
 ```
 
 ## Deploying Instances
 ```bash
-singularity instance start --userns --writable runner.sif instance1
-singularity instance start --userns --writable runner.sif instance2
+singularity instance start --userns --writable containers/runner.sif instance1
+singularity instance start --userns --writable containers/runner.sif instance2
 
-singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG instance://instance1 <GH_PERSONAL_TOKEN>
-singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG instance://instance2 <GH_PERSONAL_TOKEN>
+# Start runners
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG --app start_runner instance://instance1 <GH_PERSONAL_TOKEN>
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG --app start_runner instance://instance2 <GH_PERSONAL_TOKEN>
+
+# List runners
+singularity instance list
+
+# Shell into runners
+singularity shell instance://instance1
+
+# Stop runners
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG --app stop_runner instance://instance1 <GH_PERSONAL_TOKEN>
+singularity run --env GH_HOSTNAME=$GH_HOSTNAME,GH_ORG=$GH_ORG --app stop_runner instance://instance2 <GH_PERSONAL_TOKEN>
 ```

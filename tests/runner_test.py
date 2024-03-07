@@ -9,14 +9,14 @@ def test_instances():
     # Execute the runner
     result = run(
         [
-            "timeout",
-            "10s",
             "singularity",
             "run",
             "--env",
             f"GH_HOSTNAME={GH_HOSTNAME},GH_ORG={GH_ORG}",
             "--userns",
             "--writable",
+            "--app",
+            "test_runner",
             "containers/runner.sif",
             GH_PERSONAL_TOKEN,
         ],
@@ -25,7 +25,12 @@ def test_instances():
     )
 
     print(result.stdout)
+
+    # Verify messages
+    assert "Connected to GitHub" in result.stdout
     assert "Runner successfully added" in result.stdout
+    assert "Runner connection is good" in result.stdout
+    assert "Runner removed successfully" in result.stdout
 
 
 if __name__ == "__main__":
