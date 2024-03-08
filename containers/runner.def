@@ -2,34 +2,77 @@ bootstrap: localimage
 From: base.sif
 Stage: build
 
+%help
+    # Description
+    You need three things in order to create a Git runner:
+        * Github Hostname
+        * Github Organization
+        * Github Personal Access Token
+
+    # Create Github Personal Token
+    In order to create a Git runner you need to create a classic **Github token** via:
+
+    * Settings > Developer Settings > Personal Access Tokens > Tokens (classic)
+
+    A Github personal token is an identifier that lets Github Actions know who you are.  Think of it as a userId.  Make sure you allow all permissions.
+
+    # Setting the environment
+    Then set these in the `gh.config` file:
+    export GH_HOSTNAME=<hostname>                       # example: my-host.com
+    export GH_ORG=<Github organization>                 # example: my-org
+
+    # Setting your Github personal access token
+    Set this in your `gh.secret` file:
+    <ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX>
+
+    # Building the containers
+    Build the container:
+
+    $ cd containers
+    $ singularity build base.sif base.def
+    $ singularity build runner.sif runner.def
+
+    # Run a test
+    Finally test the runner:
+
+    $ singularity run \
+        --userns \
+        --writable \
+        --app test \
+        runner.sif
+
+%environment
+    . $HOME/gh.config
+
+%files
+    # Copy over Github configuration and secret
+    ./gh.config /domi/gh.config
+    ./gh.secret /domi/gh.secret
+
 %post
+    cd $HOME
+
     # Install American dictionary
     apt-get update
     apt-get install -y gh wamerican
     apt-get clean
 
+    # Source the needed variables
+    . $HOME/gh.config
+
     # Create a folder
-    cd $HOME
     mkdir actions-runner && cd actions-runner
 
-    # Download the latest runner package
+    # Download and install Linux Git actions-runner
     curl -O -L https://github.com/actions/runner/releases/download/v2.309.0/actions-runner-linux-x64-2.309.0.tar.gz
-
-    # Extract the installer
     tar xzf ./actions-runner-linux-x64-2.309.0.tar.gz
 
-%apprun start_runner
-
-    # Check for Github Personal Token
-    if [ -z "${1:-}" ]; then
-        echo "Usage: apptainer run --app setup_runner <instance://name> GH_PERSONAL_TOKEN"
-        exit 1
-    fi
-
     # Github authentication login
-    echo $1 > mytoken.txt
-    gh auth login --hostname $GH_HOSTNAME --with-token < mytoken.txt
-    rm mytoken.txt
+    # https://cli.github.com/manual/gh_api
+    gh auth login --hostname $GH_HOSTNAME --with-token < $HOME/gh.secret
+    rm $HOME/gh.secret
+
+%apprun start_runner
 
     # Create a unique Github Runner token
     GH_RUNNER_TOKEN=$(gh api \
@@ -62,7 +105,7 @@ Stage: build
         --token $GH_RUNNER_TOKEN \
         --name $GH_RUNNER_NAME
 
-    nohup ./run.sh > output.txt
+    nohup ./run.sh > output.txt &
 
 %apprun stop_runner
     echo " ------------------------- Stop Runner ------------------------- "
@@ -78,20 +121,7 @@ Stage: build
     cd $HOME/actions-runner
     ./config.sh remove --token $GH_REMOVE_TOKEN
 
-%apprun test_runner
-
-    # Check for Github Personal Token
-    if [ -z "${1:-}" ]; then
-        echo "Usage: apptainer run --app test_runner <instance://name> GH_PERSONAL_TOKEN"
-        exit 1
-    fi
-
-    # GitHub CLI api
-    # https://cli.github.com/manual/gh_api
-
-    # Github authentication login
-    echo $1 > mytoken.txt
-    gh auth login --hostname $GH_HOSTNAME --with-token < mytoken.txt
+%apprun test
 
     # Create a unique Github Runner token
     GH_RUNNER_TOKEN=$(gh api \
@@ -135,5 +165,3 @@ Stage: build
         | jq .token --raw-output)
 
     ./config.sh remove --token $GH_REMOVE_TOKEN
-
-%runscript
