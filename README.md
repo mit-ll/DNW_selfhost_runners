@@ -83,8 +83,8 @@ singularity run \
 If you need multiple Git runners operating on the system try using instances:
 
 ```bash
-singularity instance start --userns --writable runner.sif runner1
-singularity instance start --userns --writable runner.sif runner2
+singularity instance start --userns --tmp-sandbox --writable runner.sif runner1
+singularity instance start --userns --tmp-sandbox --writable runner.sif runner2
 
 # Start runners
 singularity run --app start_runner instance://runner1
