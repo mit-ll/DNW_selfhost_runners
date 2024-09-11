@@ -13,3 +13,8 @@ __pycache__
 .pytest_cache
 html
 save
+
+# Ignore files that are user filled
+gh-llcad-dev.config
+gh.config
+gh.secret
