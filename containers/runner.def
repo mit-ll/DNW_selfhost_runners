@@ -64,8 +64,8 @@ Stage: build
     mkdir actions-runner && cd actions-runner
 
     # Download and install Linux Git actions-runner
-    curl -O -L https://github.com/actions/runner/releases/download/v2.309.0/actions-runner-linux-x64-2.309.0.tar.gz
-    tar xzf ./actions-runner-linux-x64-2.309.0.tar.gz
+    curl -O -L https://github.com/actions/runner/releases/download/v2.319.1/actions-runner-linux-x64-2.319.1.tar.gz
+    tar xzf ./actions-runner-linux-x64-2.319.1.tar.gz
 
     # Github authentication login
     # https://cli.github.com/manual/gh_api

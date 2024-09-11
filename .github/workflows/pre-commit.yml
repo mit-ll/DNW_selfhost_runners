@@ -16,10 +16,25 @@ on:
   push:
     branches: [main]
 
+##########################################################################################
+# Jobs
+##########################################################################################
 jobs:
+  ########################################################################################
+  # Pre-commit checks.
+  ########################################################################################
   pre-commit:
     runs-on: Linux
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-    - uses: pre-commit/action@v3.0.0
+    # Checkout repo
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    # Setup Python
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        token: ${{ secrets.GH_GITHUB_COM_TOKEN }}
+        python-version: "3.10"
+    # Run pre-commit
+    - name: Run pre-commit
+      uses: pre-commit/action@v3.0.0

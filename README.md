@@ -96,5 +96,6 @@ singularity instance list
 singularity shell instance://runner1
 
 # Stop all runners
-singularity run --app stop_runner runner*
+singularity run --app stop_runner instance://runner1
+singularity run --app stop_runner instance://runner2
 ```
