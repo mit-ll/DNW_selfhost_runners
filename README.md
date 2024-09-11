@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://llcad-github.llan.ll.mit.edu/wli/wli">
-    <img src="https://llcad-github.llan.ll.mit.edu/wli/wli/blob/main/docs/pics/logo.gif?raw=true" alt="drawing" width="500"/>
+  <a href="https://github.com/destin-v">
+    <img src="https://raw.githubusercontent.com/destin-v/destin-v/main/docs/pics/logo.gif" alt="drawing" width="500"/>
   </a>
 </p>
 
@@ -16,16 +16,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/destin-v/vs_codex/actions/workflows/pre-commit.yml">  <img alt="pre-commit" src="https://github.com/destin-v/vs_codex/actions/workflows/pre-commit.yml/badge.svg"></a>
-  <a href="https://destin-v.github.io/vs_codex/src.html">                           <img alt="pdoc" src="https://github.com/destin-v/vs_codex/actions/workflows/pdoc.yml/badge.svg"></a>
-  <a href="https://github.com/destin-v/vs_codex/actions/workflows/pytest.yml">      <img alt="pytest" src="https://github.com/destin-v/vs_codex/actions/workflows/pytest.yml/badge.svg"></a>
+  <a href="https://github.com/mit-ll/github-selfhosted-runners/actions/workflows/pre-commit.yml">  <img alt="pre-commit" src="https://github.com/mit-ll/github-selfhosted-runners/actions/workflows/pre-commit.yml/badge.svg"></a>
+  <a href="https://github.com/mit-ll/github-selfhosted-runners/actions/workflows/pytest.yml">      <img alt="pytest"     src="https://github.com/mit-ll/github-selfhosted-runners/actions/workflows/pytest.yml/badge.svg"></a>
 </p>
 
 # 📒 Description
 Github Actions is an event based scheduler that triggers based on user defined events.  A commmon use for Github Actions is Continuous Integration / Continuous Development (CI/CD).  But Github Actions can be configured to trigger off of any user defined event.  This makes them very powerful for scheduling jobs.
 
 ## Requirements
-In order to use Github runners you need three things:
+In order to use Github Self-hosted Runners (GSR) you need three things:
 * **Github Hostname**:
   * https://**github-hostname**.com
 * **Github Organization**
