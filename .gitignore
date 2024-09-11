@@ -15,6 +15,7 @@ html
 save
 
 # Ignore files that are user filled
-gh-llcad-dev.config
+gh-llcad.config
+gh-llcad.secret
 gh.config
 gh.secret
