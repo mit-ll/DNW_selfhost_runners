@@ -24,7 +24,8 @@ jobs:
   # Pre-commit checks.
   ########################################################################################
   pre-commit:
-    runs-on: Linux
+    #runs-on: Linux
+    runs-on: ubuntu-latest
     steps:
     # Checkout repo
     - name: Checkout Repo
