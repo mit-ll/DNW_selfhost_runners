@@ -8,9 +8,7 @@
 # * https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-pythonCommon
 #
 ##########################################################################################
-
 name: pre-commit
-
 on:
   #pull_request:
   #push:
