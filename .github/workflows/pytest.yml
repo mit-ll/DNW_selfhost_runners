@@ -14,10 +14,11 @@ name: pytests
 on:
   # Configure the branches you want Github actions to run on.
   # Leave blank if you want to run on all branches.
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  #push:
+  #  branches: [ "main" ]
+  #pull_request:
+  #  branches: [ "main" ]
+  workflow_dispatch:  
 
 ##########################################################################################
 # Jobs
