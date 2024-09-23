@@ -40,6 +40,9 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
     # Setup the python environments to use.
+    - name: install Deb packages
+      run: |
+        sudo apt install -y  make git singularity
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
